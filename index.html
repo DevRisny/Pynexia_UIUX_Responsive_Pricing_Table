@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Responsive Pricing Table</title>
+<style>
+  :root{
+    --ink:#1f2a44; --muted:#5b6788; --line:#e3e8f7; --brand:#6c5ce7; --brand2:#ff7aa8; --ok:#00b894;
+    --bg:#f6f8ff; --card:#ffffff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;color:var(--ink);line-height:1.5;
+    background:radial-gradient(900px 400px at 10% -10%,#ffe3f0 0,transparent 60%),radial-gradient(900px 420px at 95% 0,#dfe9ff 0,transparent 60%),var(--bg);
+    padding:56px 20px 72px}
+  .wrap{max-width:1120px;margin:0 auto}
+  header{text-align:center;max-width:640px;margin:0 auto 34px}
+  .eyebrow{display:inline-block;font-size:.75rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--brand);
+    background:rgba(108,92,231,.1);padding:6px 14px;border-radius:999px}
+  h1{font-size:clamp(2rem,5vw,3rem);line-height:1.1;margin:16px 0 10px;letter-spacing:-.02em}
+  header p{color:var(--muted);font-size:1.05rem}
+
+  .toggle{display:flex;align-items:center;justify-content:center;gap:14px;margin:26px 0 38px;font-weight:700}
+  .toggle span{color:var(--muted);transition:color .2s}
+  .toggle span.active{color:var(--ink)}
+  .switch{position:relative;width:60px;height:32px;border:none;border-radius:999px;cursor:pointer;
+    background:linear-gradient(135deg,var(--brand),#8e7dff);box-shadow:0 8px 18px -8px rgba(108,92,231,.7)}
+  .switch::after{content:"";position:absolute;top:4px;left:4px;width:24px;height:24px;border-radius:50%;background:#fff;transition:transform .25s}
+  .switch[aria-checked="true"]::after{transform:translateX(28px)}
+  .save{font-size:.72rem;font-weight:800;color:#007a62;background:#d9f7ee;padding:4px 10px;border-radius:999px;margin-left:6px}
+
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;align-items:stretch}
+  .plan{position:relative;background:var(--card);border:1.5px solid var(--line);border-radius:26px;padding:34px 28px 30px;
+    display:flex;flex-direction:column;box-shadow:0 20px 40px -28px rgba(60,70,140,.45);transition:transform .2s,box-shadow .2s}
+  .plan:hover{transform:translateY(-6px);box-shadow:0 30px 50px -26px rgba(60,70,140,.55)}
+  .plan.featured{border:2px solid transparent;background:linear-gradient(#fff,#fff) padding-box,linear-gradient(135deg,var(--brand),var(--brand2)) border-box;transform:scale(1.03)}
+  .plan.featured:hover{transform:scale(1.03) translateY(-6px)}
+  .tag{position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+    color:#fff;background:linear-gradient(135deg,var(--brand),var(--brand2));padding:6px 16px;border-radius:999px;white-space:nowrap}
+  .icon{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-size:1.4rem;margin-bottom:16px}
+  .i1{background:#e2f8ef}.i2{background:#ece9ff}.i3{background:#ffe6ef}
+  .plan h2{font-size:1.3rem}
+  .plan .desc{color:var(--muted);font-size:.95rem;margin:4px 0 20px;min-height:46px}
+  .price{display:flex;align-items:baseline;gap:6px;margin-bottom:4px}
+  .price .amt{font-size:2.9rem;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+  .price .per{color:var(--muted);font-weight:600}
+  .billed{font-size:.85rem;color:var(--muted);min-height:20px;margin-bottom:22px}
+  ul{list-style:none;display:grid;gap:11px;margin-bottom:28px;flex:1}
+  li{display:flex;gap:10px;align-items:flex-start;font-size:.97rem}
+  li::before{content:"\2713";flex:none;width:20px;height:20px;border-radius:50%;background:#d9f7ee;color:#007a62;font-size:.72rem;font-weight:900;display:grid;place-items:center;margin-top:2px}
+  li.off{color:#9aa4c2}
+  li.off::before{content:"\2013";background:#eef1fb;color:#9aa4c2}
+  .btn{display:block;text-align:center;text-decoration:none;font-weight:800;padding:14px 18px;border-radius:14px;border:2px solid var(--brand);color:var(--brand);background:#fff;transition:all .2s}
+  .btn:hover{background:rgba(108,92,231,.08)}
+  .btn.primary{color:#fff;border-color:transparent;background:linear-gradient(135deg,var(--brand),#8e7dff);box-shadow:0 14px 24px -12px rgba(108,92,231,.8)}
+  .btn.primary:hover{filter:brightness(1.06)}
+  .btn:focus-visible,.switch:focus-visible{outline:3px solid #b9aefc;outline-offset:3px}
+  footer{text-align:center;color:var(--muted);margin-top:34px;font-size:.9rem}
+
+  @media (max-width:960px){.grid{grid-template-columns:1fr 1fr}.plan.featured{transform:none}.plan.featured:hover{transform:translateY(-6px)}.grid .plan:last-child{grid-column:1/-1}}
+  @media (max-width:640px){body{padding:36px 16px 56px}.grid{grid-template-columns:1fr}.grid .plan:last-child{grid-column:auto}.plan .desc{min-height:0}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Pricing</span>
+    <h1>Simple plans that grow with you</h1>
+    <p>Start free, upgrade when you are ready. Switch billing any time and save with annual plans.</p>
+  </header>
+
+  <div class="toggle" role="group" aria-label="Billing period">
+    <span id="lblM" class="active">Monthly</span>
+    <button class="switch" id="sw" role="switch" aria-checked="false" aria-label="Switch to annual billing"></button>
+    <span id="lblA">Annual <em class="save">Save 20%</em></span>
+  </div>
+
+  <section class="grid" aria-label="Pricing plans">
+    <article class="plan">
+      <div class="icon i1">&#127793;</div>
+      <h2>Free</h2>
+      <p class="desc">Everything you need to try things out and learn the basics.</p>
+      <div class="price"><span class="amt" data-m="0" data-a="0">$0</span><span class="per">/ month</span></div>
+      <div class="billed">Free forever</div>
+      <ul>
+        <li>1 active project</li>
+        <li>Community support</li>
+        <li>Basic analytics</li>
+        <li class="off">Custom domain</li>
+        <li class="off">Team collaboration</li>
+      </ul>
+      <a class="btn" href="#">Get started</a>
+    </article>
+
+    <article class="plan featured">
+      <span class="tag">Most popular</span>
+      <div class="icon i2">&#128640;</div>
+      <h2>Pro</h2>
+      <p class="desc">For creators and small teams who want to move faster.</p>
+      <div class="price"><span class="amt" data-m="19" data-a="15">$19</span><span class="per">/ month</span></div>
+      <div class="billed" data-m="Billed monthly" data-a="Billed $180 yearly">Billed monthly</div>
+      <ul>
+        <li>Unlimited projects</li>
+        <li>Priority email support</li>
+        <li>Advanced analytics</li>
+        <li>Custom domain</li>
+        <li class="off">Dedicated manager</li>
+      </ul>
+      <a class="btn primary" href="#">Start free trial</a>
+    </article>
+
+    <article class="plan">
+      <div class="icon i3">&#127970;</div>
+      <h2>Enterprise</h2>
+      <p class="desc">Security, scale and support for larger organisations.</p>
+      <div class="price"><span class="amt" data-m="59" data-a="47">$59</span><span class="per">/ month</span></div>
+      <div class="billed" data-m="Billed monthly" data-a="Billed $564 yearly">Billed monthly</div>
+      <ul>
+        <li>Everything in Pro</li>
+        <li>Single sign-on (SSO)</li>
+        <li>Team roles &amp; permissions</li>
+        <li>99.9% uptime SLA</li>
+        <li>Dedicated success manager</li>
+      </ul>
+      <a class="btn" href="#">Contact sales</a>
+    </article>
+  </section>
+  <footer>Prices in USD. Cancel anytime.</footer>
+</div>
+
+<script>
+  const sw = document.getElementById('sw');
+  const lblM = document.getElementById('lblM'), lblA = document.getElementById('lblA');
+  function render(annual){
+    sw.setAttribute('aria-checked', annual);
+    lblM.classList.toggle('active', !annual);
+    lblA.classList.toggle('active', annual);
+    document.querySelectorAll('.amt').forEach(el => el.textContent = '$' + (annual ? el.dataset.a : el.dataset.m));
+    document.querySelectorAll('.billed[data-m]').forEach(el => el.textContent = annual ? el.dataset.a : el.dataset.m);
+  }
+  sw.addEventListener('click', () => render(sw.getAttribute('aria-checked') !== 'true'));
+  render(false);
+</script>
+</body>
+</html>
